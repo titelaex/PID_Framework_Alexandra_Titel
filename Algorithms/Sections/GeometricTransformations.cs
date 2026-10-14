@@ -61,5 +61,50 @@ namespace Algorithms.Sections
             }
             return resultCCW;
         }
+        public static (Bitmap Image, double Mean, double StdDev) CropImage(Bitmap source, int xMin, int yMin, int xMax, int yMax)
+        {
+            if (source == null) return (null, 0, 0);
+
+            int rectWidth = xMax - xMin;
+            int rectHeight = yMax - yMin;
+            Bitmap cropped = new Bitmap(rectWidth, rectHeight);
+
+            long sumR = 0, sumG = 0, sumB = 0;
+            int N = rectWidth * rectHeight;
+
+            for (int y = 0; y < rectHeight; y++)
+            {
+                for (int x = 0; x < rectWidth; x++)
+                {
+                    Color p = source.GetPixel(xMin + x, yMin + y);
+                    cropped.SetPixel(x, y, p);
+
+                    sumR += p.R;
+                    sumG += p.G;
+                    sumB += p.B;
+                }
+            }
+
+            double meanR = (double)sumR / N;
+            double meanG = (double)sumG / N;
+            double meanB = (double)sumB / N;
+
+            double mean = (meanR + meanG + meanB) / 3.0;
+
+            double sumSqDiff = 0;
+            for (int y = 0; y < rectHeight; y++)
+            {
+                for (int x = 0; x < rectWidth; x++)
+                {
+                    Color p = cropped.GetPixel(x, y);
+                    double intensity = (p.R + p.G + p.B) / 3.0;
+                    sumSqDiff += Math.Pow(intensity - mean, 2);
+                }
+            }
+
+            double stdDev = Math.Sqrt(sumSqDiff / N);
+
+            return (cropped, mean, stdDev);
+        }
     }
 }

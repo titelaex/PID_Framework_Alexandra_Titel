@@ -509,6 +509,112 @@ namespace Framework.ViewModel.Commands
         }
         #endregion
 
+        #region Mirror image
+        private ICommand _mirrorImageCommand;
+        public ICommand MirrorImageCommand
+        {
+            get
+            {
+                if (_mirrorImageCommand == null)
+                    _mirrorImageCommand = new RelayCommand(MirrorImage);
+                return _mirrorImageCommand;
+            }
+        }
+
+        private void MirrorImage(object parameter)
+        {
+            if (!IsImageLoaded())
+                return;
+
+            ClearProcessedCanvas(parameter);
+
+            if (ColorInitialImage != null)
+            {
+                System.Drawing.Bitmap bmpSource = ColorInitialImage.ToBitmap();
+
+                System.Drawing.Bitmap resultBmp = GeometricTransformations.MirrorImage(bmpSource);
+
+                ColorProcessedImage = new Emgu.CV.Image<Emgu.CV.Structure.Bgr, byte>(resultBmp);
+            }
+            else if (GrayInitialImage != null)
+            {
+                System.Drawing.Bitmap bmpSource = GrayInitialImage.ToBitmap();
+                System.Drawing.Bitmap resultBmp = GeometricTransformations.MirrorImage(bmpSource);
+                GrayProcessedImage = new Emgu.CV.Image<Emgu.CV.Structure.Gray, byte>(resultBmp);
+            }
+        }
+        #endregion
+
+        #region Rotate Clockwise
+        private ICommand _rotateCWCommand;
+        public ICommand RotateCWCommand
+        {
+            get
+            {
+                if (_rotateCWCommand == null)
+                    _rotateCWCommand = new RelayCommand(RotateClockwise);
+                return _rotateCWCommand;
+            }
+        }
+
+        private void RotateClockwise(object parameter)
+        {
+            if (!IsImageLoaded())
+                return;
+
+            ClearProcessedCanvas(parameter);
+
+            if (ColorInitialImage != null)
+            {
+                System.Drawing.Bitmap bmpSource = ColorInitialImage.ToBitmap();
+                System.Drawing.Bitmap resultBmp = GeometricTransformations.RotateClockwise(bmpSource);
+                ColorProcessedImage = new Emgu.CV.Image<Emgu.CV.Structure.Bgr, byte>(resultBmp);
+            }
+            else if (GrayInitialImage != null)
+            {
+                System.Drawing.Bitmap bmpSource = GrayInitialImage.ToBitmap();
+                System.Drawing.Bitmap resultBmp = GeometricTransformations.RotateClockwise(bmpSource);
+                GrayProcessedImage = new Emgu.CV.Image<Emgu.CV.Structure.Gray, byte>(resultBmp);
+            }
+        }
+        
+        #endregion
+
+        #region Rotate Anti-clockwise
+        private ICommand _rotateCCWCommand;
+        public ICommand RotateCCWCommand
+        {
+            get
+            {
+                if (_rotateCCWCommand == null)
+                    _rotateCCWCommand = new RelayCommand(RotateAntiClockwise);
+                return _rotateCCWCommand;
+            }
+        }
+
+        private void RotateAntiClockwise(object parameter)
+        {
+            if (!IsImageLoaded())
+                return;
+
+            ClearProcessedCanvas(parameter);
+
+            if (ColorInitialImage != null)
+            {
+                System.Drawing.Bitmap bmpSource = ColorInitialImage.ToBitmap();
+                System.Drawing.Bitmap resultBmp = GeometricTransformations.RotateAntiClockwise(bmpSource);
+                ColorProcessedImage = new Emgu.CV.Image<Emgu.CV.Structure.Bgr, byte>(resultBmp);
+            }
+            else if (GrayInitialImage != null)
+            {
+                System.Drawing.Bitmap bmpSource = GrayInitialImage.ToBitmap();
+                System.Drawing.Bitmap resultBmp = GeometricTransformations.RotateAntiClockwise(bmpSource);
+                GrayProcessedImage = new Emgu.CV.Image<Emgu.CV.Structure.Gray, byte>(resultBmp);
+            }
+        }
+
+        #endregion
+
         #endregion
 
         #region Pointwise operations
