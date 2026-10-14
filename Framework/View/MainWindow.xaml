@@ -143,6 +143,10 @@
                 <MenuItem Header="Binary"
                           Command="{Binding Path=MenuCommands.BinaryImageCommand}"
                           CommandParameter="{Binding ElementName=processedImageCanvas}"/>
+                <MenuItem Header="Mirror Image" Click="MenuMirror_Click"/>
+                <MenuItem Header="Rotate Clockwise" Click="MenuRotateCW_Click"/>
+                <MenuItem Header="Rotate Anti-clockwise" Click="MenuRotateCCW_Click"/>
+                <MenuItem Header="Crop Image" Click="MenuCrop_Click"/>
             </MenuItem>
 
             <MenuItem Header="Pointwise operations"

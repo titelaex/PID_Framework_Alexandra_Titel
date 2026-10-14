@@ -1,4 +1,6 @@
-﻿using Emgu.CV;
+﻿using System;
+using System.Drawing;
+using Emgu.CV;
 using Emgu.CV.Structure;
 
 namespace Algorithms.Tools
@@ -74,6 +76,43 @@ namespace Algorithms.Tools
                 }
             }
             return result;
+        }
+        #endregion
+
+        #region Crop Image
+        public static (Bitmap cropped, double mean, double stdDev) CropAndCalculate(Bitmap source, int xMin, int yMin, int xMax, int yMax)
+        {
+            int rectWidth = xMax - xMin;
+            int rectHeight = yMax - yMin;
+            Bitmap croppedImage = new Bitmap(rectWidth, rectHeight);
+
+            long sum = 0;
+            int N = rectWidth * rectHeight;
+
+            for (int y = 0; y < rectHeight; y++)
+            {
+                for (int x = 0; x < rectWidth; x++)
+                {
+                    Color p = source.GetPixel(xMin + x, yMin + y);
+                    croppedImage.SetPixel(x, y, p);
+                    sum += p.R;
+                }
+            }
+
+            double mean = (double)sum / N;
+            double sumSqDiff = 0;
+
+            for (int y = 0; y < rectHeight; y++)
+            {
+                for (int x = 0; x < rectWidth; x++)
+                {
+                    Color p = croppedImage.GetPixel(x, y);
+                    sumSqDiff += Math.Pow(p.R - mean, 2);
+                }
+            }
+
+            double stdDev = Math.Sqrt(sumSqDiff / N);
+            return (croppedImage, mean, stdDev);
         }
         #endregion 
     }
