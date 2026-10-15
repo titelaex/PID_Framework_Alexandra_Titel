@@ -489,7 +489,7 @@ namespace Framework.ViewModel.Commands
             }
         }
 
-    
+
 
         private void ConvertImageToGrayscale(object parameter)
         {
@@ -501,7 +501,7 @@ namespace Framework.ViewModel.Commands
                 MessageBox.Show("It is possible to convert only color images!");
                 return;
             }
-          
+
 
             ClearProcessedCanvas(parameter);
 
@@ -577,7 +577,7 @@ namespace Framework.ViewModel.Commands
                 GrayProcessedImage = new Emgu.CV.Image<Emgu.CV.Structure.Gray, byte>(resultBmp);
             }
         }
-        
+
         #endregion
 
         #region Rotate Anti-clockwise
@@ -615,6 +615,97 @@ namespace Framework.ViewModel.Commands
 
         #endregion
 
+        #region Brightness and Contrast Adjustment
+        private ICommand _BrightnessCommand;
+        public ICommand BrightnessCommand
+        {
+            get
+            {
+                if (_BrightnessCommand == null)
+                    _BrightnessCommand = new RelayCommand(Brightness);
+                return _BrightnessCommand;
+            }
+        }
+
+        private void Brightness(object parameter)
+        {
+            if (!IsImageLoaded())
+                return;
+            List<string> labels = new List<string>
+            {
+            "a: ",
+            "b: "
+            };
+            DialogWindow window = new DialogWindow(_mainVM, labels);
+            window.ShowDialog();
+            List<double> values = window.GetValues();
+            if (values == null)
+                return;
+
+            double a = values[0];
+            double b = values[1];
+
+            ClearProcessedCanvas(parameter);
+
+            var LUT = PointwiseOperations.ContrastBrightness(a, b);
+
+            if (GrayInitialImage != null)
+            {
+                GrayProcessedImage = PointwiseOperations.ApplyLUT(GrayInitialImage, LUT);
+            }
+            else if (ColorInitialImage != null)
+            {
+                var grayImage = Tools.Convert(ColorInitialImage);
+                GrayProcessedImage = PointwiseOperations.ApplyLUT(grayImage, LUT);
+            }
+        }
+
+        #endregion
+
+        #region GammaOperator
+        private ICommand _GammaCommand;
+        public ICommand GammaCommand
+        {
+            get
+            {
+                if (_GammaCommand == null)
+                    _GammaCommand = new RelayCommand(Gamma);
+                return _GammaCommand;
+            }
+        }
+
+        private void Gamma(object parameter)
+        {
+            if (!IsImageLoaded())
+                return;
+            List<string> labels = new List<string>
+            {
+            "Gamma: "
+            };
+            DialogWindow window = new DialogWindow(_mainVM, labels);
+            window.ShowDialog();
+            List<double> values = window.GetValues();
+            if (values == null)
+                return;
+
+            double gamma = values[0];
+
+            ClearProcessedCanvas(parameter);
+
+            var LUT = PointwiseOperations.GammaOperator(gamma);
+
+            if (GrayInitialImage != null)
+            {
+                GrayProcessedImage = PointwiseOperations.ApplyLUT(GrayInitialImage, LUT);
+            }
+            else if (ColorInitialImage != null)
+            {
+                var grayImage = Tools.Convert(ColorInitialImage);
+                GrayProcessedImage = PointwiseOperations.ApplyLUT(grayImage, LUT);
+            }
+        }
+
+        #endregion
         #endregion
 
         #region Pointwise operations
